@@ -39,7 +39,8 @@ void ProcessLine(char *Line, int Length)
       if (sscanf(Parameters, "%d:%d:%d,%lf,%lf,%ld", &GPS.Hours, &GPS.Minutes, &GPS.Seconds, &GPS.Latitude, &GPS.Longitude, &GPS.Altitude) >= 6)
       {
         HostPort.printf("Decoded GPS=%02d:%02d:%02d,%.5f,%.5f,%05ld\r\n", GPS.Hours, GPS.Minutes, GPS.Seconds,
-                                                                          GPS.Latitude, GPS.Longitude, GPS.Altitude); 
+                                                                          GPS.Latitude, GPS.Longitude, GPS.Altitude);
+        GPS.GotNewPosition = 1;                                                                          
         CalculateDistanceAndDirection();
       }
       else
@@ -88,6 +89,7 @@ void ProcessLine(char *Line, int Length)
                                                                  LoRa.Position.Latitude,
                                                                  LoRa.Position.Longitude,
                                                                  LoRa.Position.Altitude);
+        LoRa.Position.GotNewPosition = 1;                                                                          
         CalculateDistanceAndDirection();
       }
       else
@@ -160,6 +162,8 @@ void CalculateDistanceAndDirection(void)
       LoRa.Direction = CalculateDirection(LoRa.Position.Latitude, LoRa.Position.Longitude, GPS.Latitude, GPS.Longitude);
 
       HostPort.printf("Distance=%lf, Direction=%.0lf\n", LoRa.Distance, LoRa.Direction);
+
+      LoRa.GotDistanceAndDirection = 1;
     }
   }
 }
