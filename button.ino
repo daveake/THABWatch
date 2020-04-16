@@ -1,3 +1,4 @@
+unsigned long ButtonPressedAt = 0;
 
 void SetupButton(void)
 {
@@ -13,19 +14,24 @@ void CheckButton(void)
 
 void pressed()
 {
-    HostPort.println("Button Pressed");
-    
-    uint16_t color = random(0xFFFF);
-    ttgo->eTFT->fillScreen(color);
-    ttgo->eTFT->setTextColor(color, TFT_WHITE);
-    ttgo->eTFT->drawString("User Button pressed",  5, 100, 4);
+  HostPort.println("Button Pressed");
+
+  ButtonPressedAt = millis();
 }
+
 void released()
 {
+  if (ButtonPressedAt > 0)
+  {
     HostPort.println("Button Released");
     
-    uint16_t color = random(0xFFFF);
-    ttgo->eTFT->fillScreen(color);
-    ttgo->eTFT->setTextColor(color, TFT_WHITE);
-    ttgo->eTFT->drawString("User Button released",  5, 100, 4);
+    if (millis() > (ButtonPressedAt + 500))
+    {
+      LongButtonPress();
+    }
+    else
+    {
+      ShortButtonPress();
+    }
+  }
 }

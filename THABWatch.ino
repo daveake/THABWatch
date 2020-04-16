@@ -13,19 +13,21 @@ AXP20X_Class axp;
 #define HostPort  Serial
 #define s7xgPort  Serial1
 
+int ScreenNumber;   // 0=GPS, 1=LoRa, 2=Dir, 3=Settings
 
 struct TPosition
 {
   int           Hours, Minutes, Seconds;
   double        Longitude, Latitude;
   long          Altitude;
+  int           PositionIsValid;
   int           GotNewPosition;
 } GPS;
 
 
 struct TLoRa
 {
-  int               CurrentRSSI, GotNewCurrentRSSI;
+  int               CurrentRSSI, GotNewCurrentRSSI, CurrentRSSIIsValid;
   int               PacketRSSI;
   int               PacketSNR;
   int               FreqErr;
@@ -34,7 +36,7 @@ struct TLoRa
   struct TPosition  Position;
   double            Direction;
   double            Distance;
-  int               GotDistanceAndDirection;
+  int               GotDistanceAndDirection, DistanceAndDirectionAreValid;
 } LoRa;
 
 TTGOClass *ttgo;
@@ -48,6 +50,8 @@ void setup()
   SetupWatch();
   
   SetupButton();
+
+  ShowScreen(ScreenNumber = 0);    // 0=GPS, 1=LoRa, 2=Dir, 3=Settings
   
   SetupS7xg();
    
@@ -57,21 +61,11 @@ void setup()
 
 void loop()
 {
-  char Line[32];
-  
   CheckButton();
   
   CheckS7xg();
 
-  if (GPS.GotNewPosition)
-  {
-    sprintf(Line, "%02d:%02d:%02d", GPS.Hours, GPS.Minutes, GPS.Seconds);
-    ttgo->eTFT->setTextColor(TFT_WHITE, TFT_BLACK);
-    ttgo->eTFT->drawString(Line,  5, 160, 4);
-    GPS.GotNewPosition = 0;
-  }
-
-
+  UpdateScreen(ScreenNumber, 0);
 }
 
 void SetupWatch(void)
@@ -79,9 +73,55 @@ void SetupWatch(void)
   ttgo = TTGOClass::getWatch();
   ttgo->begin();
   ttgo->openBL();
-
-  ttgo->eTFT->fillScreen(TFT_BLACK);
-  ttgo->eTFT->setTextColor(TFT_WHITE, TFT_BLACK);
-  ttgo->eTFT->setTextFont(4);
-  ttgo->eTFT->drawString("User Button Test",  5, 100, 4);
 }
+
+void ShortButtonPress(void)
+{
+  ShowScreen(ScreenNumber = (ScreenNumber + 1) % 4);
+}
+
+void LongButtonPress(void)
+{
+}
+
+void ShowScreen(int ScreenNumber)    // 0=GPS, 1=LoRa, 2=Dir, 3=Settings
+{
+  if (ScreenNumber == 0)
+  {
+    ShowGPSScreen();
+  }
+  else if (ScreenNumber == 1)
+  {
+    ShowLoRaScreen();
+  }
+  else if (ScreenNumber == 2)
+  {
+    ShowDirectionScreen();
+  }
+  else if (ScreenNumber == 3)
+  {
+    ShowSettingsScreen();
+  }  
+
+  UpdateScreen(ScreenNumber, 1);
+}
+ 
+void UpdateScreen(int ScreenNumber, int Always)    // 0=GPS, 1=LoRa, 2=Dir, 3=Settings
+{
+  if (ScreenNumber == 0)
+  {
+    UpdateGPSScreen(Always);
+  }
+  else if (ScreenNumber == 1)
+  {
+    UpdateLoRaScreen(Always);
+  }
+  else if (ScreenNumber == 2)
+  {
+    UpdateDirectionScreen(Always);
+  }
+  else if (ScreenNumber == 3)
+  {
+    UpdateSettingsScreen(Always);
+  }  
+ }

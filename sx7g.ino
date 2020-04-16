@@ -40,7 +40,8 @@ void ProcessLine(char *Line, int Length)
       {
         HostPort.printf("Decoded GPS=%02d:%02d:%02d,%.5f,%.5f,%05ld\r\n", GPS.Hours, GPS.Minutes, GPS.Seconds,
                                                                           GPS.Latitude, GPS.Longitude, GPS.Altitude);
-        GPS.GotNewPosition = 1;                                                                          
+        GPS.GotNewPosition = 1;
+        GPS.PositionIsValid = 1;
         CalculateDistanceAndDirection();
       }
       else
@@ -90,6 +91,7 @@ void ProcessLine(char *Line, int Length)
                                                                  LoRa.Position.Longitude,
                                                                  LoRa.Position.Altitude);
         LoRa.Position.GotNewPosition = 1;                                                                          
+        LoRa.Position.PositionIsValid = 1;
         CalculateDistanceAndDirection();
       }
       else
@@ -124,7 +126,18 @@ void CheckS7xg(void)
   // Host to S7Xg - remove later, but handy for testing
   while (HostPort.available())
   {
-    s7xgPort.write(HostPort.read());
+    Character = HostPort.read();
+    
+    if (Character == '1')
+    {
+      ShortButtonPress();
+    }
+    else if (Character == '2')
+    {
+      LongButtonPress();
+    }
+    
+    s7xgPort.write(Character);
   }
 
   // Receive from S7XG serial port
@@ -164,6 +177,7 @@ void CalculateDistanceAndDirection(void)
       HostPort.printf("Distance=%lf, Direction=%.0lf\n", LoRa.Distance, LoRa.Direction);
 
       LoRa.GotDistanceAndDirection = 1;
+      LoRa.DistanceAndDirectionAreValid = 1;
     }
   }
 }
