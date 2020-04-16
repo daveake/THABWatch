@@ -9,38 +9,43 @@
 
 AXP20X_Class axp;
 
+#define HostPort  Serial
+#define s7xgPort  Serial1
+
+
+struct TPosition
+{
+  int           Hours, Minutes, Seconds;
+  double        Longitude, Latitude;
+  long          Altitude;
+} GPS;
+
+
+struct TLoRa
+{
+  int               CurrentRSSI;
+  int               PacketRSSI;
+  int               PacketSNR;
+  int               FreqErr;
+  char              Payload[32];
+  unsigned long     Counter;
+  struct TPosition  Position;
+  double            Direction;
+  double            Distance;
+} LoRa;
+
 void setup()
 {
-    Serial.begin(115200);
-    Serial.println("T-Watch HAB Chase Firmware V1.00");
+  HostPort.begin(115200);
+  HostPort.println("T-Watch HAB Chase Firmware V1.00");
 
-    Serial.println("");
-    Serial.print("Powering up S7xG Booard ...");
-
-    Wire1.begin(SOC_GPIO_PIN_TWATCH_SEN_SDA , SOC_GPIO_PIN_TWATCH_SEN_SCL);
-    axp.begin(Wire1, AXP202_SLAVE_ADDRESS);
-    axp.setLDO3Mode(1);
-    axp.setPowerOutPut(AXP202_LDO3, AXP202_ON); // S76G (MCU + LoRa)
-    axp.setLDO4Voltage(AXP202_LDO4_1800MV);
-    axp.setPowerOutPut(AXP202_LDO4, AXP202_ON); // S76G (Sony GNSS)
-
-    Serial.println("");
-    Serial.print("Connecting to S7xG Booard ...");
-    Serial1.begin(115200, SERIAL_8E1, SOC_GPIO_PIN_TWATCH_RX, SOC_GPIO_PIN_TWATCH_TX);
-
-    Serial.println("");
-    Serial.println("Ready\n");
+  SetupS7xg();
+   
+  HostPort.println("");
+  HostPort.println("Ready\n");
 }
 
 void loop()
 {
-  while (Serial.available() > 0)
-  {
-    Serial1.write(Serial.read());
-  }
-  
-  while (Serial1.available() > 0)
-  {
-    Serial.write(Serial1.read());
-  }
+  CheckS7xg();
 }
