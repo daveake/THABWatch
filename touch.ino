@@ -10,6 +10,7 @@ void CheckTouch()
     if (LastX <= 0)
     {
       HostPort.printf("*** PRESS x:%03d  y:%03d ***\n", p.x, p.y);
+      ScreenPress((p.x * 3) / 4, (p.y * 3) / 4);      // scale for pixel display size
     }
   
     if ((p.x != LastX) || (p.y != LastY))

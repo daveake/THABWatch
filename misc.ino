@@ -43,3 +43,8 @@ unsigned int ColourFromStatus(int Status)
     return TFT_BLUE;
   }
 }
+
+int ClickIsWithinBounds(int ClickX, int ClickY, int x, int y, int w, int h)
+{
+  return (ClickX >= x) && (ClickX < (x + w)) && (ClickY >= y) && (ClickY < (y + h));
+}

@@ -72,7 +72,7 @@ void setup()
   {
     LoadDefaults();
     HostPort.println("Loaded default settings");
-    StoreSettings();
+    SaveSettings();
   }
 
   SetupS7xg();      // Do this BEFORE SetupWatch otherwise it stops touchscreen presses from working (possibly i2c issue ?)
@@ -82,6 +82,9 @@ void setup()
   SetupButton();
 
   ShowScreen(ScreenNumber = 0);    // Logo screen
+
+  SendLoRaMode(Settings.Mode);
+  SendLoRaFrequency(Settings.Frequency);
     
   HostPort.println("");
   HostPort.println("Ready\n");
@@ -140,7 +143,7 @@ void ShowScreen(int ScreenNumber)    // 0=GPS, 1=LoRa, 2=Dir, 3=Settings
   UpdateScreen(ScreenNumber, 1);
 }
  
-void UpdateScreen(int ScreenNumber, int Always)    // 0=GPS, 1=LoRa, 2=Dir, 3=Settings
+void UpdateScreen(int ScreenNumber, int Always)
 {
   if (ScreenNumber == 0)
   {
@@ -163,6 +166,31 @@ void UpdateScreen(int ScreenNumber, int Always)    // 0=GPS, 1=LoRa, 2=Dir, 3=Se
     UpdateSettingsScreen(Always);
   }  
 }
+
+void ScreenPress(int x, int y)
+{
+  if (ScreenNumber == 0)
+  {
+    // LogoScreenPress(x, y);
+  }
+  else if (ScreenNumber == 1)
+  {
+    // GPSScreenPress(x, y);
+  }
+  else if (ScreenNumber == 2)
+  {
+    // LoRaScreenPress(x, y);
+  }
+  else if (ScreenNumber == 3)
+  {
+    // DirectionScreenPress(x, y);
+  }
+  else if (ScreenNumber == 4)
+  {
+    SettingsScreenPress(x, y);
+  }  
+}
+
 
 void LoadDefaults()
 {
@@ -189,7 +217,7 @@ void LoadSettings(void)
   }
 }
 
-void StoreSettings(void)
+void SaveSettings(void)
 {
   int i;
   unsigned char *ptr;

@@ -220,3 +220,13 @@ double CalculateDirection(double HABLatitude, double HABLongitude, double CarLat
 
     return atan2(y, x) * 180 / Pi;
 }
+
+void SendLoRaMode(int Mode)
+{
+  s7xgPort.printf("~M%d\r\n", Mode);  
+}
+
+void SendLoRaFrequency(float Frequency)
+{
+  s7xgPort.printf("~F%.4f\r\n", Frequency);
+}
