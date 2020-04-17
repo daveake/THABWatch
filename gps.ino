@@ -5,12 +5,15 @@ void ShowGPSScreen(void)
   ttgo->eTFT->setTextFont(4);
   ttgo->eTFT->drawString("GPS", 90, 0, 4);
   ttgo->eTFT->drawRect(40, 60, 160, 135, TFT_YELLOW);
+  ttgo->eTFT->drawString("Waiting", 75, 70, 4);
 }
 
 
 void UpdateGPSScreen(int Always)
 {
-  if (GPS.PositionIsValid && (Always || GPS.GotNewPosition))
+  static unsigned long LastPositionAt=0;
+  
+  if ((GPS.LastPositionAt > 0) && (Always || (GPS.LastPositionAt != LastPositionAt)))
   {
     char Line[32];
     
@@ -28,6 +31,6 @@ void UpdateGPSScreen(int Always)
     sprintf(Line, "%ld m", GPS.Altitude);
     ttgo->eTFT->drawString(Line, 100, 160, 4);
     
-    GPS.GotNewPosition = 0;
+    LastPositionAt = GPS.LastPositionAt;
   }
 }

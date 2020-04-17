@@ -10,7 +10,9 @@ void ShowLoRaScreen(void)
 
 void UpdateLoRaScreen(int Always)
 {
-  if (LoRa.Position.PositionIsValid && (Always || LoRa.Position.GotNewPosition))
+  static unsigned long LastPositionAt=0;
+  
+  if ((LoRa.Position.LastPositionAt > 0) && (Always || (LoRa.Position.LastPositionAt != LastPositionAt)))
   {
     char Line[32];
     
@@ -31,6 +33,6 @@ void UpdateLoRaScreen(int Always)
     sprintf(Line, "%ld m", LoRa.Position.Altitude);
     ttgo->eTFT->drawString(Line, 85, 180, 4);
     
-    LoRa.Position.GotNewPosition = 0;
+    LastPositionAt = LoRa.Position.LastPositionAt;
   }
 }

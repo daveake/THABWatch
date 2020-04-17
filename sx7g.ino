@@ -2,8 +2,7 @@ const double Pi = 3.1415926;
 
 void SetupS7xg(void)
 {
-  HostPort.println("");
-  HostPort.print("Powering up S7xG Booard ...");
+  HostPort.print("Powering up S7xG Board ...");
   
   Wire1.begin(SOC_GPIO_PIN_TWATCH_SEN_SDA , SOC_GPIO_PIN_TWATCH_SEN_SCL);
   axp.begin(Wire1, AXP202_SLAVE_ADDRESS);
@@ -12,8 +11,7 @@ void SetupS7xg(void)
   axp.setLDO4Voltage(AXP202_LDO4_1800MV);
   axp.setPowerOutPut(AXP202_LDO4, AXP202_ON); // S76G (Sony GNSS)
   
-  HostPort.println("");
-  HostPort.print("Connecting to S7xG Booard ...");
+  HostPort.print("\nConnecting to S7xG Booard ...");
   s7xgPort.begin(115200, SERIAL_8E1, SOC_GPIO_PIN_TWATCH_RX, SOC_GPIO_PIN_TWATCH_TX);
 }
 
@@ -36,12 +34,12 @@ void ProcessLine(char *Line, int Length)
     }
     else if (strcmp(Line, "GPS") == 0)
     {
-      if (sscanf(Parameters, "%d:%d:%d,%lf,%lf,%ld", &GPS.Hours, &GPS.Minutes, &GPS.Seconds, &GPS.Latitude, &GPS.Longitude, &GPS.Altitude) >= 6)
+      if (sscanf(Parameters, "%d:%d:%d,%lf,%lf,%ld,%d,%d", &GPS.Hours, &GPS.Minutes, &GPS.Seconds, &GPS.Latitude, &GPS.Longitude, &GPS.Altitude, &GPS.Speed, &GPS.Direction) >= 6)
       {
-        HostPort.printf("Decoded GPS=%02d:%02d:%02d,%.5f,%.5f,%05ld\r\n", GPS.Hours, GPS.Minutes, GPS.Seconds,
-                                                                          GPS.Latitude, GPS.Longitude, GPS.Altitude);
-        GPS.GotNewPosition = 1;
-        GPS.PositionIsValid = 1;
+        HostPort.printf("Decoded GPS=%02d:%02d:%02d,%.5f,%.5f,%05ld,%d,%d\r\n", GPS.Hours, GPS.Minutes, GPS.Seconds,
+                                                                                GPS.Latitude, GPS.Longitude, GPS.Altitude,
+                                                                                GPS.Speed, GPS.Direction);
+        GPS.LastPositionAt = millis();
         CalculateDistanceAndDirection();
       }
       else
@@ -90,8 +88,7 @@ void ProcessLine(char *Line, int Length)
                                                                  LoRa.Position.Latitude,
                                                                  LoRa.Position.Longitude,
                                                                  LoRa.Position.Altitude);
-        LoRa.Position.GotNewPosition = 1;                                                                          
-        LoRa.Position.PositionIsValid = 1;
+        LoRa.Position.LastPositionAt = millis();
         CalculateDistanceAndDirection();
       }
       else
@@ -172,9 +169,9 @@ void CalculateDistanceAndDirection(void)
     if ((LoRa.Position.Latitude != 0) || (LoRa.Position.Longitude != 0))
     {
       LoRa.Distance = CalculateDistance(LoRa.Position.Latitude, LoRa.Position.Longitude, GPS.Latitude, GPS.Longitude);
-      LoRa.Direction = CalculateDirection(LoRa.Position.Latitude, LoRa.Position.Longitude, GPS.Latitude, GPS.Longitude);
+      LoRa.Position.Direction = (int)CalculateDirection(LoRa.Position.Latitude, LoRa.Position.Longitude, GPS.Latitude, GPS.Longitude);
 
-      HostPort.printf("Distance=%lf, Direction=%.0lf\n", LoRa.Distance, LoRa.Direction);
+      HostPort.printf("Distance=%.0lf, Direction=%d\n", LoRa.Distance, LoRa.Position.Direction);
 
       LoRa.GotDistanceAndDirection = 1;
       LoRa.DistanceAndDirectionAreValid = 1;

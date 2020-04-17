@@ -16,7 +16,7 @@ void UpdateDirectionScreen(int Always)
 
     sprintf(Distance, "%.0lf m", LoRa.Distance);
     ttgo->eTFT->drawString(Distance, 90, 110, 4);
-    plotNeedle((int)LoRa.Direction);
+    plotNeedle((int)LoRa.Position.Direction - GPS.Direction);
     LoRa.GotDistanceAndDirection = 0;
   }
 }
