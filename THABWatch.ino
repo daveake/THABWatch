@@ -22,6 +22,7 @@ struct TPosition
   long          Altitude;
   int           Speed;
   int           Direction;
+  int           Satellites;
   unsigned long LastPositionAt;
 } GPS;
 
@@ -39,15 +40,20 @@ struct TLoRa
   int               GotDistanceAndDirection, DistanceAndDirectionAreValid;
 } LoRa;
 
+struct TSystemInfo
+{
+  unsigned int      BatteryVoltage;   // mV
+} SystemInfo;
+
 struct TSettings
 {
   float   Frequency;
   int     Mode;
-//  int     ImplicitOrExplicit;
-//  int     ErrorCoding;
-//  int     Bandwidth;
-//  int     SpreadingFactor;
-//  int     LowDataRateOptimize;
+  //  int     ImplicitOrExplicit;
+  //  int     ErrorCoding;
+  //  int     Bandwidth;
+  //  int     SpreadingFactor;
+  //  int     LowDataRateOptimize;
 } Settings;
 
 #define EEPROM_SIZE (sizeof(Settings) + 2)
@@ -57,7 +63,7 @@ TTGOClass *ttgo;
 
 void setup()
 {
-  EEPROM.begin(EEPROM_SIZE);  
+  EEPROM.begin(EEPROM_SIZE);
 
   HostPort.begin(115200);
   HostPort.println("\nT-Watch HAB Chase Firmware V1.00\n");
@@ -75,17 +81,25 @@ void setup()
     SaveSettings();
   }
 
+  LoRa.CurrentRSSI = -200;    
+
   SetupS7xg();      // Do this BEFORE SetupWatch otherwise it stops touchscreen presses from working (possibly i2c issue ?)
 
   SetupWatch();
- 
+
   SetupButton();
+
+  SetupTouch();
+
+  ClearScreen();
+  
+  ShowStatusBar();
 
   ShowScreen(ScreenNumber = 0);    // Logo screen
 
   SendLoRaMode(Settings.Mode);
   SendLoRaFrequency(Settings.Frequency);
-    
+
   HostPort.println("");
   HostPort.println("Ready\n");
 }
@@ -98,7 +112,11 @@ void loop()
 
   CheckTouch();
 
+  CheckPower();
+
   UpdateScreen(ScreenNumber, 0);
+
+  UpdateStatusBar();
 }
 
 void SetupWatch(void)
@@ -108,17 +126,23 @@ void SetupWatch(void)
   ttgo->openBL();
 }
 
-void ShortButtonPress(void)
+void PreviousScreen()
+{
+  ShowScreen(ScreenNumber = (ScreenNumber + 4) % 5);
+}
+
+void NextScreen()
 {
   ShowScreen(ScreenNumber = (ScreenNumber + 1) % 5);
 }
 
-void LongButtonPress(void)
-{
-}
 
 void ShowScreen(int ScreenNumber)    // 0=GPS, 1=LoRa, 2=Dir, 3=Settings
 {
+  // Clear client area
+  // ttgo->eTFT->fillScreen(TFT_BLACK);
+  ttgo->eTFT->fillRect(0, 0, 240, 220, TFT_BLACK);
+  
   if (ScreenNumber == 0)
   {
     ShowLogocreen();
@@ -138,11 +162,11 @@ void ShowScreen(int ScreenNumber)    // 0=GPS, 1=LoRa, 2=Dir, 3=Settings
   else if (ScreenNumber == 4)
   {
     ShowSettingsScreen();
-  }  
+  }
 
   UpdateScreen(ScreenNumber, 1);
 }
- 
+
 void UpdateScreen(int ScreenNumber, int Always)
 {
   if (ScreenNumber == 0)
@@ -164,7 +188,7 @@ void UpdateScreen(int ScreenNumber, int Always)
   else if (ScreenNumber == 4)
   {
     UpdateSettingsScreen(Always);
-  }  
+  }
 }
 
 void ScreenPress(int x, int y)
@@ -188,7 +212,7 @@ void ScreenPress(int x, int y)
   else if (ScreenNumber == 4)
   {
     SettingsScreenPress(x, y);
-  }  
+  }
 }
 
 
@@ -197,11 +221,11 @@ void LoadDefaults()
   Settings.Mode = 1;
   Settings.Frequency = 434.275;
 
-//  Settings.PPM = 0.0;
-//  Settings.Rx.ImplicitOrExplicit = 1;
-//  Settings.Rx.ErrorCoding = 5;
-//  Settings.Rx.Bandwidth = 3;
-//  Settings.Rx.SpreadingFactor = 6;
+  //  Settings.PPM = 0.0;
+  //  Settings.Rx.ImplicitOrExplicit = 1;
+  //  Settings.Rx.ErrorCoding = 5;
+  //  Settings.Rx.Bandwidth = 3;
+  //  Settings.Rx.SpreadingFactor = 6;
 
 }
 
@@ -211,9 +235,9 @@ void LoadSettings(void)
   unsigned char *ptr;
 
   ptr = (unsigned char *)(&Settings);
-  for (i=0; i<sizeof(Settings); i++, ptr++)
+  for (i = 0; i < sizeof(Settings); i++, ptr++)
   {
-    *ptr = EEPROM.read(i+2);
+    *ptr = EEPROM.read(i + 2);
   }
 }
 
@@ -221,17 +245,22 @@ void SaveSettings(void)
 {
   int i;
   unsigned char *ptr;
-  
+
   // Signature
   EEPROM.write(0, 'D');
   EEPROM.write(1, 'A');
 
   // Settings
   ptr = (unsigned char *)(&Settings);
-  for (i=0; i<sizeof(Settings); i++, ptr++)
+  for (i = 0; i < sizeof(Settings); i++, ptr++)
   {
-    EEPROM.write(i+2, *ptr);
+    EEPROM.write(i + 2, *ptr);
   }
 
   EEPROM.commit();
+}
+
+void ClearScreen(void)
+{
+  ttgo->eTFT->fillScreen(TFT_BLACK);
 }

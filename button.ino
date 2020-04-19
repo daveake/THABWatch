@@ -27,11 +27,11 @@ void released()
     
     if (millis() > (ButtonPressedAt + 500))
     {
-      LongButtonPress();
+      PreviousScreen();
     }
     else
     {
-      ShortButtonPress();
+      NextScreen();
     }
   }
 }

@@ -1,5 +1,9 @@
-int LastX=-1;
-int LastY=-1;
+TP_Point Pressed, LastPosition;
+
+void SetupTouch(void)
+{
+  Pressed.x = -1;
+}
 
 void CheckTouch()
 {
@@ -7,21 +11,43 @@ void CheckTouch()
   {
     TP_Point p =  ttgo->touch->getPoint();
 
-    if (LastX <= 0)
+    if ((p.x > 0) || (p.y > 0))
     {
-      HostPort.printf("*** PRESS x:%03d  y:%03d ***\n", p.x, p.y);
-      ScreenPress((p.x * 3) / 4, (p.y * 3) / 4);      // scale for pixel display size
-    }
-  
-    if ((p.x != LastX) || (p.y != LastY))
-    {
-      // HostPort.printf("*** x:%03d  y:%03d ***\n", p.x, p.y);
-      LastX = p.x;
-      LastY = p.y;
+      if (Pressed.x < 0)
+      {
+        Pressed = p;
+        HostPort.printf("*** DOWN x:%03d  y:%03d ***\n", p.x, p.y);
+      }
+
+      LastPosition = p;
     }
   }
-  else
+  else if (Pressed.x >= 0)
   {
-    LastX = -1;
+    int XDistance, YDistance;
+
+    HostPort.printf("*** UP x:%03d  y:%03d ***\n", LastPosition.x, LastPosition.y);
+
+    XDistance = LastPosition.x - Pressed.x;
+    YDistance = LastPosition.y - Pressed.y;
+
+    if ((abs(XDistance) + abs(YDistance)) < 20)
+    {
+      // Process as a press
+      HostPort.println("^^^ PRESS ^^^");
+      ScreenPress((Pressed.x * 3) / 4, (Pressed.y * 3) / 4);      // scale for pixel display size
+    }
+    else if ((XDistance > 50) || (YDistance > 50))
+    {
+      // Swipe up or right
+      PreviousScreen();
+    }
+    else if ((XDistance < -50) || (YDistance < -50))
+    {
+      // Swipe up or right
+      NextScreen();
+    }
+
+    Pressed.x = -1;
   }
 }

@@ -34,11 +34,13 @@ void ProcessLine(char *Line, int Length)
     }
     else if (strcmp(Line, "GPS") == 0)
     {
-      if (sscanf(Parameters, "%d:%d:%d,%lf,%lf,%ld,%d,%d", &GPS.Hours, &GPS.Minutes, &GPS.Seconds, &GPS.Latitude, &GPS.Longitude, &GPS.Altitude, &GPS.Speed, &GPS.Direction) >= 6)
+      // GPS=17:53:03,51.95022,-2.54436,151,0,117,9
+
+      if (sscanf(Parameters, "%d:%d:%d,%lf,%lf,%ld,%d,%d,%d", &GPS.Hours, &GPS.Minutes, &GPS.Seconds, &GPS.Latitude, &GPS.Longitude, &GPS.Altitude, &GPS.Speed, &GPS.Direction, &GPS.Satellites) >= 6)
       {
-        HostPort.printf("Decoded GPS=%02d:%02d:%02d,%.5f,%.5f,%05ld,%d,%d\r\n", GPS.Hours, GPS.Minutes, GPS.Seconds,
-                                                                                GPS.Latitude, GPS.Longitude, GPS.Altitude,
-                                                                                GPS.Speed, GPS.Direction);
+        HostPort.printf("Decoded GPS=%02d:%02d:%02d,%.5f,%.5f,%ld,%d,%d,%d\r\n", GPS.Hours, GPS.Minutes, GPS.Seconds,
+                                                                                 GPS.Latitude, GPS.Longitude, GPS.Altitude,
+                                                                                 GPS.Speed, GPS.Direction, GPS.Satellites);
         GPS.LastPositionAt = millis();
         CalculateDistanceAndDirection();
       }
@@ -127,11 +129,11 @@ void CheckS7xg(void)
     
     if (Character == '1')
     {
-      ShortButtonPress();
+      NextScreen();
     }
     else if (Character == '2')
     {
-      LongButtonPress();
+      PreviousScreen();
     }
     
     s7xgPort.write(Character);

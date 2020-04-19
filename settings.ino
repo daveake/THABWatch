@@ -10,7 +10,6 @@ struct TButton
 
 void ShowSettingsScreen(void)
 {
-  ttgo->eTFT->fillScreen(TFT_BLACK);
   ttgo->eTFT->setTextColor(TFT_WHITE, TFT_BLACK);
   ttgo->eTFT->setTextFont(4);
   ttgo->eTFT->drawString("Settings",  32, 0, 4);
@@ -105,10 +104,10 @@ const TButton Buttons[] =
 {
   { 60,  40, 50, 40, "<",  &ModeDownClicked},
   {130,  40, 50, 40, ">",  &ModeUpClicked},
-  { 60, 199, 50, 40, "<",  &FrequencyDownClicked},
-  {130, 199, 50, 40, ">",  &FrequencyUpClicked},
-  {  0, 199, 50, 40, "<<", &FrequencyDownDownClicked},
-  {190, 199, 50, 40, ">>", &FrequencyUpUpClicked}
+  { 60, 177, 50, 40, "<",  &FrequencyDownClicked},
+  {130, 177, 50, 40, ">",  &FrequencyUpClicked},
+  {  0, 177, 50, 40, "<<", &FrequencyDownDownClicked},
+  {190, 177, 50, 40, ">>", &FrequencyUpUpClicked}
 };
 
 void DrawButtons(void)
@@ -146,9 +145,9 @@ void DrawFrequency(void)
   ttgo->eTFT->setTextDatum(MC_DATUM); 
   ttgo->eTFT->setTextColor(TFT_WHITE, TFT_BLACK);
 
-  ttgo->eTFT->fillRect(0, 140, 240, 50, TFT_BLACK);
+  ttgo->eTFT->fillRect(0, 120, 240, 50, TFT_BLACK);
   sprintf(Line, "Freq. %.3f MHz", Settings.Frequency);
-  ttgo->eTFT->drawString(Line, 120, 165, 4);
+  ttgo->eTFT->drawString(Line, 120, 145, 4);
   
   ttgo->eTFT->setTextDatum(TL_DATUM); 
 }

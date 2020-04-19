@@ -1,10 +1,9 @@
 void ShowDirectionScreen(void)
 {
-  ttgo->eTFT->fillScreen(TFT_BLACK);
   ttgo->eTFT->setTextColor(TFT_WHITE, TFT_BLACK);
   ttgo->eTFT->setTextFont(4);
-  ttgo->eTFT->drawCircle(119, 119, 119, TFT_YELLOW);
-  ttgo->eTFT->drawRect(60, 95, 120, 50, TFT_YELLOW);
+  ttgo->eTFT->drawCircle(119, 109, 109, TFT_YELLOW);
+  ttgo->eTFT->drawRect(60, 95, 110, 50, TFT_YELLOW);
 }
 
 void UpdateDirectionScreen(int Always)
@@ -26,17 +25,17 @@ uint16_t osx = 120, osy = 120; // Saved x & y coords
 void plotNeedle(int value)
 {
   // Calculate tip of needle coords
-  float sx = 105 * cos(value * 0.0174532925);
-  float sy = 105 * sin(value * 0.0174532925);
+  float sx = 95 * cos(value * 0.0174532925);
+  float sy = 95 * sin(value * 0.0174532925);
   
   // Erase old needle image
 //  ttgo->eTFT->drawLine(120, 120, osx, osy + 120, TFT_BLACK);
   ttgo->eTFT->drawCircle(osx, osy, 10, TFT_BLACK);
   
   osx = sx + 120;
-  osy = sy + 120;
+  osy = sy + 110;
 
   // Draw the needle in the new position
-//  ttgo->eTFT->drawLine(120, 120, osx, osy + 120, TFT_YELLOW);
+//  ttgo->eTFT->drawLine(120, 110, osx, osy + 120, TFT_YELLOW);
   ttgo->eTFT->drawCircle(osx, osy, 10, TFT_YELLOW);
 }

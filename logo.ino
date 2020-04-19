@@ -98,38 +98,23 @@ const unsigned char logo [] PROGMEM = {
 void ShowLogocreen(void)
 {
   char Line[32];
-  
-  ttgo->eTFT->fillScreen(TFT_BLACK);
+
+  // UKHAS Logo
   ttgo->eTFT->drawBitmap(57, 57, logo, 124, 93, TFT_LIGHTGREY);
+
+  // Title
   ttgo->eTFT->setTextDatum(TC_DATUM); 
-  ttgo->eTFT->setTextColor(TFT_YELLOW, TFT_BLACK);
-  ttgo->eTFT->drawString("HAB Watch by daveake", 120, 10, 2);
+  ttgo->eTFT->setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+  ttgo->eTFT->drawString("HAB Watch V1.0 by Dave Akerman", 120, 10, 2);
+
+  // LoRa Details
   sprintf(Line, "M%d  %.3f MHz", Settings.Mode, Settings.Frequency);
   ttgo->eTFT->setTextColor(TFT_CYAN, TFT_BLACK);
   ttgo->eTFT->drawString(Line, 120, 180, 4);
+
   ttgo->eTFT->setTextDatum(TL_DATUM); 
 }
 
 void UpdateLogoScreen(int Always)
 {
-  static int GPS_Status=-1;
-  static int LoRa_Status=-1;
-
-  if (Always || (GPS_Status != GPSStatus()))
-  {
-    GPS_Status = GPSStatus();
-    ttgo->eTFT->setTextDatum(BL_DATUM); 
-    ttgo->eTFT->setTextColor(TFT_BLACK, ColourFromStatus(GPS_Status));
-    ttgo->eTFT->drawString(" GPS ", 0, 239, 4);
-  }
-
-  if (Always || (LoRa_Status != LoRaStatus()))
-  {
-    LoRa_Status = LoRaStatus();
-    ttgo->eTFT->setTextDatum(BR_DATUM);
-    ttgo->eTFT->setTextColor(TFT_BLACK, ColourFromStatus(LoRa_Status));
-    ttgo->eTFT->drawString(" LoRa ", 239, 239, 4);
-  }
-  
-  ttgo->eTFT->setTextDatum(TL_DATUM); 
 }
