@@ -10,6 +10,14 @@ struct TButton
 
 void ShowSettingsScreen(void)
 {
+  ttgo->eTFT->drawRoundRect(2, 2, 236, 50, 5, TFT_WHITE);
+  ttgo->eTFT->drawRoundRect(2, 60, 236, 100, 5, TFT_WHITE);
+  ttgo->eTFT->drawRoundRect(2, 168, 236, 50, 5, TFT_WHITE);
+
+  ttgo->eTFT->setTextDatum(ML_DATUM); 
+  ttgo->eTFT->setTextColor(TFT_WHITE, Background(ScreenNumber));
+  ttgo->eTFT->drawString("Freq. Error:", 20, 190, 2);
+
   DrawButtons();
 
   DrawMode();
@@ -98,12 +106,12 @@ void FrequencyDownDownClicked(void)
 
 const TButton Buttons[] =
 {
-  { 60,  20, 50, 40, "<",  &ModeDownClicked},
-  {130,  20, 50, 40, ">",  &ModeUpClicked},
-  { 60, 157, 50, 40, "<",  &FrequencyDownClicked},
-  {130, 157, 50, 40, ">",  &FrequencyUpClicked},
-  {  0, 157, 50, 40, "<<", &FrequencyDownDownClicked},
-  {190, 157, 50, 40, ">>", &FrequencyUpUpClicked}
+  {  5,   5, 50, 40, "<",  &ModeDownClicked},
+  {184,   5, 50, 40, ">",  &ModeUpClicked},
+  { 60, 115, 50, 40, "<",  &FrequencyDownClicked},
+  {130, 115, 50, 40, ">",  &FrequencyUpClicked},
+  {  5, 115, 50, 40, "<<", &FrequencyDownDownClicked},
+  {185, 115, 50, 40, ">>", &FrequencyUpUpClicked}
 };
 
 void DrawButtons(void)
@@ -127,25 +135,37 @@ void DrawMode(void)
   ttgo->eTFT->setTextDatum(MC_DATUM); 
   ttgo->eTFT->setTextColor(TFT_WHITE, Background(ScreenNumber));
 
-  ttgo->eTFT->fillRect(0, 80, 240, 30, Background(ScreenNumber));
+  ttgo->eTFT->fillRect(60, 15, 120, 25, Background(ScreenNumber));
   sprintf(Line, "Mode %d", Settings.Mode);
-  ttgo->eTFT->drawString(Line, 120, 95, 4);
+  ttgo->eTFT->drawString(Line, 120, 30, 4);
 }
 
 void DrawFrequency(void)
 {
   char Line[32];
   
-  ttgo->eTFT->setTextDatum(MC_DATUM); 
+  ttgo->eTFT->setTextDatum(TC_DATUM); 
   ttgo->eTFT->setTextColor(TFT_WHITE, Background(ScreenNumber));
 
-  ttgo->eTFT->fillRect(0, 115, 240, 30, Background(ScreenNumber));
+  ttgo->eTFT->fillRect(7, 65, 226, 30, Background(ScreenNumber));
   sprintf(Line, "Freq. %.3f MHz", Settings.Frequency);
-  ttgo->eTFT->drawString(Line, 120, 125, 4);
+  ttgo->eTFT->drawString(Line, 125, 80, 4);
 }
 
 void UpdateSettingsScreen(int Always)
 {
+  static int LastFreqErr=9999;
+  char Line[16];
+  
+  if (Always || (LoRa.FreqErr != LastFreqErr))
+  {
+    LastFreqErr = LoRa.FreqErr;
+    ttgo->eTFT->fillRect(105, 180, 130, 30, Background(ScreenNumber));
+    sprintf(Line, "%dHz", LoRa.FreqErr);
+    ttgo->eTFT->setTextDatum(MC_DATUM); 
+    ttgo->eTFT->setTextColor(TFT_WHITE, Background(ScreenNumber));
+    ttgo->eTFT->drawString(Line, 165, 195, 4);
+  }
 }
 
 void SettingsScreenPress(int x, int y)

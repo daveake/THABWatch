@@ -2,7 +2,6 @@ void ShowDirectionScreen(void)
 {
   ttgo->eTFT->fillCircle(119, 109, 109, TFT_YELLOW);
   ttgo->eTFT->fillCircle(119, 109, 80, Background(ScreenNumber));
-  // ttgo->eTFT->drawRect(60, 95, 110, 50, TFT_YELLOW);
 }
 
 void UpdateDirectionScreen(int Always)
@@ -26,11 +25,39 @@ void UpdateDirectionScreen(int Always)
     
     LastDirection = LoRa.Position.Direction;
     
-    ttgo->eTFT->drawRect(60, 105, 120, 30, Background(ScreenNumber));
+    ttgo->eTFT->fillRect(45, 90, 145, 43, Background(ScreenNumber));
     ttgo->eTFT->setTextDatum(MC_DATUM);
     ttgo->eTFT->setTextColor(TFT_WHITE, Background(ScreenNumber));
-    sprintf(Distance, "%.0lf m", LoRa.Distance);
-    ttgo->eTFT->drawString(Distance, 120, 120, 4);
+    if (LoRa.Distance >= 10000)   // 10km 
+    {
+      sprintf(Distance, "%.0fkm", LoRa.Distance/1000);
+    }
+    else if (LoRa.Distance >= 1000)   // 1km 
+    {
+      sprintf(Distance, "%.1fkm", LoRa.Distance/1000);
+    }
+    else
+    {
+      sprintf(Distance, "%.0fm", LoRa.Distance);
+    }
+    ttgo->eTFT->drawString(Distance, 120, 115, 6);
+    
+    ttgo->eTFT->fillRect(70, 135, 100, 30, Background(ScreenNumber));
+    ttgo->eTFT->setTextDatum(MC_DATUM);
+    ttgo->eTFT->setTextColor(TFT_WHITE, Background(ScreenNumber));
+    if (LoRa.Position.Altitude < GPS.Altitude)
+    {
+      sprintf(Distance, "%ldm", LoRa.Position.Altitude - GPS.Altitude);
+    }
+    else if (LoRa.Position.Altitude > GPS.Altitude)
+    {
+      sprintf(Distance, "+%ldm", LoRa.Position.Altitude - GPS.Altitude);
+    }
+    else
+    {
+      strcpy(Distance, "0m");
+    }
+    ttgo->eTFT->drawString(Distance, 120, 150, 4);
     
     LoRa.GotDistanceAndDirection = 0;
   }

@@ -96,7 +96,7 @@ void setup()
   
   ShowStatusBar();
   
-  ShowScreen(ScreenNumber = 2);    // Logo screen
+  ShowScreen(ScreenNumber = 0);    // Logo screen
 
   SendLoRaMode(Settings.Mode);
   SendLoRaFrequency(Settings.Frequency);
@@ -139,7 +139,7 @@ void NextScreen()
 
 unsigned int Background(int ScreenNumber)
 {
-	static int Colours[] = {TFT_BLACK, TFT_DARKGREY, TFT_NAVY, TFT_BLUE, TFT_LIGHTGREY};
+	static int Colours[] = {TFT_BLACK, TFT_DARKGREY, TFT_NAVY, TFT_BLUE, TFT_RED};
 	
 	if ((ScreenNumber >= 0) && (ScreenNumber <= 4))
 	{

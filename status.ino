@@ -7,7 +7,11 @@ void ShowStatusBar(void)
   // Battery Status - all done in updates
 
   // LoRa Signal - draw container
-  ttgo->eTFT->drawRect(128, 221, 52, 18, TFT_WHITE);
+  ttgo->eTFT->drawRect(124, 221, 52, 18, TFT_WHITE);
+  ttgo->eTFT->drawLine(176, 235, 182, 230, TFT_WHITE);
+  ttgo->eTFT->drawLine(182, 230, 179, 224, TFT_WHITE);
+  ttgo->eTFT->drawLine(182, 235, 182, 224, TFT_WHITE);
+  ttgo->eTFT->drawLine(182, 230, 185, 224, TFT_WHITE);
 
   // loRa Status - all done in updates
 
@@ -53,11 +57,11 @@ void UpdateBatteryStatus(void)
     }
     else if (BatteryVoltage > 4200)
     {
-      Width = (BatteryVoltage - 3000) / 30;
+      Width = (BatteryVoltage - 3000) / 24;
     }
     else
     {
-      Width = 40;
+      Width = 50;
     }
     
     if (Width < 10)
@@ -78,7 +82,7 @@ void UpdateBatteryStatus(void)
 
     ttgo->eTFT->drawRect(61, 221, 52, 18, CellColour);
     ttgo->eTFT->fillRect(113, 226, 4, 8, CellColour);
-    ttgo->eTFT->fillRect(62, 222, 40, 16, TFT_BLACK);
+    ttgo->eTFT->fillRect(62, 222, 50, 16, TFT_BLACK);
     ttgo->eTFT->fillRect(62, 222, Width, 16, Colour);
   }
 }
@@ -96,15 +100,15 @@ void UpdateLoRaRSSIStatus(void)
 
     Width = ((LoRa_RSSI + 150) * 4) / 5;
     if (Width < 1) Width = 1;
-    if (Width > 40) Width = 40;
+    if (Width > 50) Width = 50;
 
     if (Width > LastWidth)
     {
-      ttgo->eTFT->fillRect(129+LastWidth, 222, Width-LastWidth, 16, TFT_GREEN);
+      ttgo->eTFT->fillRect(125+LastWidth, 222, Width-LastWidth, 16, TFT_GREEN);
     }
     else if (Width < LastWidth)
     {
-      ttgo->eTFT->fillRect(129+Width, 222, LastWidth-Width, 16, TFT_BLACK);
+      ttgo->eTFT->fillRect(125+Width, 222, LastWidth-Width, 16, TFT_BLACK);
     }
   }
 }
