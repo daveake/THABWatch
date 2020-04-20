@@ -1,9 +1,5 @@
 void ShowLoRaScreen(void)
 {
-  ttgo->eTFT->setTextColor(TFT_WHITE, TFT_BLACK);
-  ttgo->eTFT->setTextFont(4);
-  ttgo->eTFT->drawString("LoRa", 80, 0, 4);
-  ttgo->eTFT->drawRect(40, 40, 160, 160, TFT_YELLOW);
 }
 
 
@@ -15,8 +11,8 @@ void UpdateLoRaScreen(int Always)
   {
     char Line[32];
     
+    ttgo->eTFT->setTextColor(TFT_WHITE, Background(ScreenNumber));
     ttgo->eTFT->setTextDatum(TL_DATUM);
-    ttgo->eTFT->setTextColor(TFT_WHITE, TFT_BLACK);
 
     sprintf(Line, "%s", LoRa.Payload);
     ttgo->eTFT->drawString(Line, 90, 50, 4);

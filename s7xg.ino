@@ -19,6 +19,8 @@ void ProcessLine(char *Line, int Length)
 {
   char *Equals, *Parameters;
 
+  HostPort.print(Line);
+  
   Equals = strchr(Line, '=');
 
   if (Equals != NULL)
@@ -123,21 +125,21 @@ void CheckS7xg(void)
   char Character;
 
   // Host to S7Xg - remove later, but handy for testing
-  while (HostPort.available())
-  {
-    Character = HostPort.read();
-    
-    if (Character == '1')
-    {
-      NextScreen();
-    }
-    else if (Character == '2')
-    {
-      PreviousScreen();
-    }
-    
-    s7xgPort.write(Character);
-  }
+//  while (HostPort.available())
+//  {
+//    Character = HostPort.read();
+//    
+//    if (Character == '1')
+//    {
+//      NextScreen();
+//    }
+//    else if (Character == '2')
+//    {
+//      PreviousScreen();
+//    }
+//    
+//    s7xgPort.write(Character);
+//  }
 
   // Receive from S7XG serial port
   while (s7xgPort.available())
@@ -225,10 +227,12 @@ double CalculateDirection(double HABLatitude, double HABLongitude, double CarLat
 
 void SendLoRaMode(int Mode)
 {
-  s7xgPort.printf("~M%d\r\n", Mode);  
+  HostPort.printf("Set Mode %d\r\n", Mode);
+  s7xgPort.printf("~M%d\r\n", Mode);
 }
 
 void SendLoRaFrequency(float Frequency)
 {
-  s7xgPort.printf("~F%.4f\r\n", Frequency);
+  HostPort.printf("Set Frequency %.4f\r\n", Frequency);
+  s7xgPort.printf("~F%.4f\r", Frequency);
 }

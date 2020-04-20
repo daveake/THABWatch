@@ -94,8 +94,8 @@ void setup()
   ClearScreen();
   
   ShowStatusBar();
-
-  ShowScreen(ScreenNumber = 0);    // Logo screen
+  
+  ShowScreen(ScreenNumber = 1);    // Logo screen
 
   SendLoRaMode(Settings.Mode);
   SendLoRaFrequency(Settings.Frequency);
@@ -136,12 +136,24 @@ void NextScreen()
   ShowScreen(ScreenNumber = (ScreenNumber + 1) % 5);
 }
 
+unsigned int Background(int ScreenNumber)
+{
+	static int Colours[] = {TFT_BLACK, TFT_DARKGREY, TFT_NAVY, TFT_BLUE, TFT_LIGHTGREY};
+	
+	if ((ScreenNumber >= 0) && (ScreenNumber <= 4))
+	{
+		return Colours[ScreenNumber];
+	}
+	
+	return TFT_RED;
+}
+		
 
 void ShowScreen(int ScreenNumber)    // 0=GPS, 1=LoRa, 2=Dir, 3=Settings
 {
   // Clear client area
   // ttgo->eTFT->fillScreen(TFT_BLACK);
-  ttgo->eTFT->fillRect(0, 0, 240, 220, TFT_BLACK);
+  ttgo->eTFT->fillRoundRect(0, 0, 240, 219, 5, Background(ScreenNumber));
   
   if (ScreenNumber == 0)
   {

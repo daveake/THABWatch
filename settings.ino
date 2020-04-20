@@ -10,10 +10,6 @@ struct TButton
 
 void ShowSettingsScreen(void)
 {
-  ttgo->eTFT->setTextColor(TFT_WHITE, TFT_BLACK);
-  ttgo->eTFT->setTextFont(4);
-  ttgo->eTFT->drawString("Settings",  32, 0, 4);
-
   DrawButtons();
 
   DrawMode();
@@ -102,12 +98,12 @@ void FrequencyDownDownClicked(void)
 
 const TButton Buttons[] =
 {
-  { 60,  40, 50, 40, "<",  &ModeDownClicked},
-  {130,  40, 50, 40, ">",  &ModeUpClicked},
-  { 60, 177, 50, 40, "<",  &FrequencyDownClicked},
-  {130, 177, 50, 40, ">",  &FrequencyUpClicked},
-  {  0, 177, 50, 40, "<<", &FrequencyDownDownClicked},
-  {190, 177, 50, 40, ">>", &FrequencyUpUpClicked}
+  { 60,  20, 50, 40, "<",  &ModeDownClicked},
+  {130,  20, 50, 40, ">",  &ModeUpClicked},
+  { 60, 157, 50, 40, "<",  &FrequencyDownClicked},
+  {130, 157, 50, 40, ">",  &FrequencyUpClicked},
+  {  0, 157, 50, 40, "<<", &FrequencyDownDownClicked},
+  {190, 157, 50, 40, ">>", &FrequencyUpUpClicked}
 };
 
 void DrawButtons(void)
@@ -119,7 +115,7 @@ void DrawButtons(void)
   
   for (i=0; i<6; i++)
   {
-    ttgo->eTFT->fillRect(Buttons[i].x, Buttons[i].y, Buttons[i].w, Buttons[i].h, TFT_YELLOW);
+    ttgo->eTFT->fillRoundRect(Buttons[i].x, Buttons[i].y, Buttons[i].w, Buttons[i].h, 3, TFT_YELLOW);
     ttgo->eTFT->drawString(Buttons[i].Caption, Buttons[i].x + Buttons[i].w / 2, Buttons[i].y + Buttons[i].h / 2, 4);
   }
 }
@@ -129,13 +125,11 @@ void DrawMode(void)
   char Line[16];
   
   ttgo->eTFT->setTextDatum(MC_DATUM); 
-  ttgo->eTFT->setTextColor(TFT_WHITE, TFT_BLACK);
+  ttgo->eTFT->setTextColor(TFT_WHITE, Background(ScreenNumber));
 
-  ttgo->eTFT->fillRect(0, 90, 240, 50, TFT_BLACK);
+  ttgo->eTFT->fillRect(0, 80, 240, 30, Background(ScreenNumber));
   sprintf(Line, "Mode %d", Settings.Mode);
-  ttgo->eTFT->drawString(Line, 120, 115, 4);
-  
-  ttgo->eTFT->setTextDatum(TL_DATUM); 
+  ttgo->eTFT->drawString(Line, 120, 95, 4);
 }
 
 void DrawFrequency(void)
@@ -143,13 +137,11 @@ void DrawFrequency(void)
   char Line[32];
   
   ttgo->eTFT->setTextDatum(MC_DATUM); 
-  ttgo->eTFT->setTextColor(TFT_WHITE, TFT_BLACK);
+  ttgo->eTFT->setTextColor(TFT_WHITE, Background(ScreenNumber));
 
-  ttgo->eTFT->fillRect(0, 120, 240, 50, TFT_BLACK);
+  ttgo->eTFT->fillRect(0, 115, 240, 30, Background(ScreenNumber));
   sprintf(Line, "Freq. %.3f MHz", Settings.Frequency);
-  ttgo->eTFT->drawString(Line, 120, 145, 4);
-  
-  ttgo->eTFT->setTextDatum(TL_DATUM); 
+  ttgo->eTFT->drawString(Line, 120, 125, 4);
 }
 
 void UpdateSettingsScreen(int Always)
@@ -165,11 +157,8 @@ void SettingsScreenPress(int x, int y)
   {
     if (ClickIsWithinBounds(x, y, Buttons[i].x, Buttons[i].y, Buttons[i].w, Buttons[i].h))
     {
-      HostPort.printf("*** BUTTON %d PRESSED ***\n", i);
       (*Buttons[i].Pressed)();
       return;
     }
   }
-
-  HostPort.println("*** NO BUTTON PRESSED ***");
 }
