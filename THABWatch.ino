@@ -38,6 +38,7 @@ struct TLoRa
   struct TPosition  Position;
   double            Distance;
   int               GotDistanceAndDirection, DistanceAndDirectionAreValid;
+  float             AscentRate;
 } LoRa;
 
 struct TSystemInfo
@@ -95,7 +96,7 @@ void setup()
   
   ShowStatusBar();
   
-  ShowScreen(ScreenNumber = 1);    // Logo screen
+  ShowScreen(ScreenNumber = 2);    // Logo screen
 
   SendLoRaMode(Settings.Mode);
   SendLoRaFrequency(Settings.Frequency);

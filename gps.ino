@@ -59,7 +59,7 @@ void UpdateGPSScreen(int Always)
     Column = 1;
     Width = 240 - Column - 1;
 
-    if ((GPS.Latitude != LastLatitude) || (GPS.Longitude != LastLongitude))
+    if (Always || (GPS.Latitude != LastLatitude) || (GPS.Longitude != LastLongitude))
     {
       LastLatitude = GPS.Latitude;
       LastLongitude = GPS.Longitude;
@@ -79,11 +79,11 @@ void UpdateGPSScreen(int Always)
     // Satellite count
     Column = 1;
     Width = 65;
-    if (GPS.Satellites != LastSatellites)
+    if (Always || (GPS.Satellites != LastSatellites))
     {
       LastSatellites = GPS.Satellites;
       
-      ttgo->eTFT->fillRect(Column+2, Row+2, Width-4, Height-24, Background(ScreenNumber));
+      ttgo->eTFT->fillRect(Column+2, Row+2, Width-4, Height-4, Background(ScreenNumber));
       ttgo->eTFT->setTextDatum(MC_DATUM);
       ttgo->eTFT->drawNumber(GPS.Satellites, Column+Width/2, Row+Height/2-1, 6);
       ttgo->eTFT->setTextDatum(BC_DATUM);
@@ -93,7 +93,7 @@ void UpdateGPSScreen(int Always)
     // Altitude
     Column += Width + 5;
     Width = 240 - Column - 1;
-    if (GPS.Altitude != LastAltitude)
+    if (Always || (GPS.Altitude != LastAltitude))
     {
       LastAltitude = GPS.Altitude;
       ttgo->eTFT->fillRect(Column+2, Row+2, Width-4, Height-4, Background(ScreenNumber));

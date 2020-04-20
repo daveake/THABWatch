@@ -68,7 +68,7 @@ void ProcessLine(char *Line, int Length)
     }
     else if (strcmp(Line, "FreqErr") == 0)
     {
-      LoRa.FreqErr = atoi(Parameters);
+      LoRa.FreqErr = (int)(atof(Parameters) * 1000);
 
       HostPort.printf("Decoded FreqErr=%d\n", LoRa.FreqErr);
     }
