@@ -43,8 +43,11 @@ void ProcessLine(char *Line, int Length)
         HostPort.printf("Decoded GPS=%02d:%02d:%02d,%.5f,%.5f,%ld,%d,%d,%d\r\n", GPS.Hours, GPS.Minutes, GPS.Seconds,
                                                                                  GPS.Latitude, GPS.Longitude, GPS.Altitude,
                                                                                  GPS.Speed, GPS.Direction, GPS.Satellites);
-        GPS.LastPositionAt = millis();
-        CalculateDistanceAndDirection();
+        if (GPS.Satellites >= 4)
+        {
+          GPS.LastPositionAt = millis();
+          CalculateDistanceAndDirection();
+        }
       }
       else
       {
