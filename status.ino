@@ -8,7 +8,7 @@ void ShowStatusBar(void)
 
   // LoRa Signal - draw container
   ttgo->eTFT->drawRect(124, 221, 52, 18, TFT_WHITE);
-  ttgo->eTFT->drawLine(176, 235, 182, 230, TFT_WHITE);
+  ttgo->eTFT->drawLine(176, 235, 182, 235, TFT_WHITE);
   ttgo->eTFT->drawLine(182, 230, 179, 224, TFT_WHITE);
   ttgo->eTFT->drawLine(182, 235, 182, 224, TFT_WHITE);
   ttgo->eTFT->drawLine(182, 230, 185, 224, TFT_WHITE);
@@ -44,7 +44,7 @@ void UpdateGPSStatus(void)
 
 void UpdateBatteryStatus(void)
 {
-  static unsigned int BatteryVoltage=999;
+  static unsigned int BatteryVoltage=9999;
 
   if (BatteryVoltage != SystemInfo.BatteryVoltage)
   {
@@ -55,7 +55,7 @@ void UpdateBatteryStatus(void)
     {
       Width = 0;
     }
-    else if (BatteryVoltage > 4200)
+    else if (BatteryVoltage < 4200)
     {
       Width = (BatteryVoltage - 3000) / 24;
     }
